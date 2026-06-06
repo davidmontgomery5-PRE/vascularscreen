@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Disclaimer } from './components/Disclaimer';
+import { MobileJumpBar } from './components/MobileJumpBar';
 import { Scorecard } from './components/Scorecard';
 import { TopBar } from './components/TopBar';
 import { scoreAll } from './engine/score';
@@ -19,7 +20,7 @@ export default function App() {
   );
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="flex min-h-full flex-col bg-gradient-to-b from-slate-50 via-white to-indigo-50/30">
       <TopBar scores={scores} onReset={reset} />
       <main className="flex-1">
         <Scorecard
@@ -32,6 +33,7 @@ export default function App() {
         />
       </main>
       <Disclaimer />
+      <MobileJumpBar scores={scores} />
     </div>
   );
 }

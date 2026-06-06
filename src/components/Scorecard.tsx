@@ -3,6 +3,7 @@ import { CRITERIA, type CriterionGroup } from '../data/criteria';
 import { PAYORS, type PayorId } from '../data/payors';
 import { scoreAll } from '../engine/score';
 import { CriterionChip } from './CriterionChip';
+import { Legend } from './Legend';
 import { StudyBreakdownCard } from './StudyBreakdownCard';
 import { Summary } from './Summary';
 
@@ -35,11 +36,12 @@ export function Scorecard({
   );
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[1fr_360px]">
-      <div className="space-y-6">
+    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 pb-24 lg:grid-cols-[1fr_380px] lg:pb-6">
+      <div className="space-y-5">
+        <Legend />
         {GROUPS.map((g) => (
-          <section key={g.id} className="rounded-lg border border-slate-200 bg-white p-4">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600">
+          <section key={g.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
               {g.label}
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -55,8 +57,8 @@ export function Scorecard({
           </section>
         ))}
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
             Insurance
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -66,10 +68,10 @@ export function Scorecard({
                 type="button"
                 onClick={() => onPayorChange(p.id)}
                 aria-pressed={payor === p.id}
-                className={`rounded-full border px-3 py-1.5 text-sm ${
+                className={`min-h-[40px] rounded-full border px-3.5 py-2 text-sm transition active:scale-[0.97] ${
                   payor === p.id
-                    ? 'border-slate-900 bg-slate-900 text-white'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                    ? 'border-indigo-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-sm shadow-indigo-500/20'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
                 {p.label}
@@ -81,17 +83,17 @@ export function Scorecard({
               type="checkbox"
               checked={aaaPriorSbe}
               onChange={(e) => onAaaPriorSbeChange(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300"
+              className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
             />
             Patient has already used Medicare AAA SBE benefit
           </label>
         </section>
       </div>
 
-      <aside className="space-y-4">
+      <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <Summary scores={scores} payor={payor} />
         <div>
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-600">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
             Per-study detail
           </h2>
           <div className="space-y-3">
