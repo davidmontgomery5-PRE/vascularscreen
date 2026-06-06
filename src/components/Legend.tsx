@@ -12,7 +12,7 @@ export function Legend() {
         className="flex w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          <span className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white">
+          <span className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-brand-navy to-brand-green text-white">
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden>
               <path d="M10 2a1 1 0 011 1v2.06a5.002 5.002 0 014 4H17a1 1 0 110 2h-2a5.002 5.002 0 01-4 4v2.06a1 1 0 11-2 0v-2.06a5.002 5.002 0 01-4-4H3a1 1 0 110-2h2a5.002 5.002 0 014-4V3a1 1 0 011-1z" />
             </svg>

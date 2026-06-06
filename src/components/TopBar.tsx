@@ -1,5 +1,6 @@
 import type { StudyScore } from '../engine/score';
 import { STUDIES } from '../data/studies';
+import { BrandMark, BrandWordmark } from './BrandMark';
 
 interface Props {
   scores: StudyScore[];
@@ -20,19 +21,15 @@ const pillClass: Record<string, string> = {
 
 export function TopBar({ scores, onReset }: Props) {
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-lg">
+    <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/75 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 text-white shadow-md shadow-indigo-500/20">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-base font-semibold tracking-tight text-slate-900">
+          <BrandMark className="h-10 w-10 shrink-0 text-brand-navy" />
+          <div className="leading-tight">
+            <BrandWordmark className="block text-base text-brand-navy" />
+            <p className="text-[11px] text-slate-500">
               Vascular Screening Scorecard
-            </h1>
-            <p className="text-[11px] text-slate-500">Point-of-care decision support</p>
+            </p>
           </div>
         </div>
 
@@ -55,7 +52,7 @@ export function TopBar({ scores, onReset }: Props) {
           </div>
           <button
             onClick={onReset}
-            className="ml-1 shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98]"
+            className="ml-1 shrink-0 rounded-lg border border-brand-navy/20 bg-white px-3 py-1.5 text-xs font-medium text-brand-navy transition hover:border-brand-navy/40 hover:bg-brand-navy-tint active:scale-[0.98]"
           >
             New Patient
           </button>

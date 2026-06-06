@@ -23,7 +23,7 @@ export function MobileJumpBar({ scores }: Props) {
         </div>
         <button
           onClick={handleJump}
-          className="rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-indigo-500/30 active:scale-[0.97]"
+          className="rounded-lg bg-gradient-to-br from-brand-navy to-brand-green px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-brand-navy/30 active:scale-[0.97]"
         >
           View summary →
         </button>

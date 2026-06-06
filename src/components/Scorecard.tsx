@@ -70,8 +70,8 @@ export function Scorecard({
                 aria-pressed={payor === p.id}
                 className={`min-h-[40px] rounded-full border px-3.5 py-2 text-sm transition active:scale-[0.97] ${
                   payor === p.id
-                    ? 'border-indigo-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-sm shadow-indigo-500/20'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                    ? 'border-brand-green bg-gradient-to-br from-brand-navy to-brand-navy-dark text-white shadow-sm shadow-brand-navy/30'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-brand-navy/30 hover:bg-brand-navy-tint'
                 }`}
               >
                 {p.label}
@@ -83,7 +83,7 @@ export function Scorecard({
               type="checkbox"
               checked={aaaPriorSbe}
               onChange={(e) => onAaaPriorSbeChange(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 rounded border-slate-300 text-brand-navy focus:ring-brand-navy"
             />
             Patient has already used Medicare AAA SBE benefit
           </label>

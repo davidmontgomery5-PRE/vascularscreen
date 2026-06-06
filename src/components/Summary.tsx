@@ -37,16 +37,16 @@ export function Summary({ scores, payor }: Props) {
       id="visit-summary"
       className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
     >
-      <div className="bg-gradient-to-br from-indigo-50 via-white to-fuchsia-50 px-4 py-3">
+      <div className="bg-gradient-to-br from-brand-navy-tint via-white to-brand-green-tint px-4 py-3">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="inline-grid h-5 w-5 place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white">
+              <span className="inline-grid h-5 w-5 place-items-center rounded-md bg-gradient-to-br from-brand-navy to-brand-green text-white">
                 <svg viewBox="0 0 20 20" className="h-3 w-3" fill="currentColor" aria-hidden>
                   <path d="M10 2l1.5 4.5L16 8l-4.5 1.5L10 14l-1.5-4.5L4 8l4.5-1.5L10 2z" />
                 </svg>
               </span>
-              <h2 className="text-sm font-semibold tracking-tight text-slate-900">
+              <h2 className="text-sm font-semibold tracking-tight text-brand-navy">
                 Visit summary
               </h2>
             </div>
@@ -54,7 +54,7 @@ export function Summary({ scores, payor }: Props) {
           </div>
           <button
             onClick={handleCopy}
-            className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white shadow-sm transition hover:bg-slate-700 active:scale-[0.98]"
+            className="shrink-0 rounded-lg bg-brand-navy px-3 py-2 text-xs font-medium text-white shadow-sm transition hover:bg-brand-navy-dark active:scale-[0.98]"
           >
             {copyState === 'copied' ? 'Copied!' : 'Copy chart note'}
           </button>
@@ -79,7 +79,7 @@ export function Summary({ scores, payor }: Props) {
 
             <div className="mt-4 border-t border-slate-200 pt-3">
               <h3 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                <svg viewBox="0 0 20 20" className="h-3 w-3 text-indigo-500" fill="currentColor" aria-hidden>
+                <svg viewBox="0 0 20 20" className="h-3 w-3 text-brand-green" fill="currentColor" aria-hidden>
                   <path d="M10 2l1.5 4.5L16 8l-4.5 1.5L10 14l-1.5-4.5L4 8l4.5-1.5L10 2z" />
                 </svg>
                 Provider talking points

@@ -20,7 +20,7 @@ export default function App() {
   );
 
   return (
-    <div className="flex min-h-full flex-col bg-gradient-to-b from-slate-50 via-white to-indigo-50/30">
+    <div className="flex min-h-full flex-col bg-gradient-to-b from-brand-navy-tint via-white to-brand-green-tint/40">
       <TopBar scores={scores} onReset={reset} />
       <main className="flex-1">
         <Scorecard
