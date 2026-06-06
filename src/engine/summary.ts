@@ -1,4 +1,3 @@
-import { BLURBS } from '../data/blurbs';
 import { PAYORS, type PayorId } from '../data/payors';
 import { STUDIES } from '../data/studies';
 import { COVERAGE_LABEL, type StudyScore } from './score';
@@ -19,12 +18,7 @@ export function buildSummary(scores: StudyScore[], payor: PayorId): Summary {
   const payorLabel = PAYORS.find((p) => p.id === payor)?.label ?? 'Unknown';
 
   const headline = buildHeadline(recommended, conditional);
-  const chartNote = buildChartNote({
-    recommended,
-    conditional,
-    notIndicated,
-    payorLabel,
-  });
+  const chartNote = buildChartNote({ recommended, conditional });
 
   return { recommended, conditional, notIndicated, payorLabel, chartNote, headline };
 }
@@ -54,71 +48,45 @@ function studyLabel(s: StudyScore): string {
 function buildChartNote(args: {
   recommended: StudyScore[];
   conditional: StudyScore[];
-  notIndicated: StudyScore[];
-  payorLabel: string;
 }): string {
-  const { recommended, conditional, notIndicated, payorLabel } = args;
+  const { recommended, conditional } = args;
   const lines: string[] = [];
 
-  lines.push('VASCULAR HEALTH ASSESSMENT');
-  lines.push(`Payor reviewed: ${payorLabel}`);
-  lines.push('');
+  lines.push('Vascular screening reviewed.');
 
   if (recommended.length === 0 && conditional.length === 0) {
-    lines.push(
-      'Vascular screening criteria reviewed today. No additional non-invasive vascular studies indicated at this visit. Will continue to monitor at routine follow-up.',
-    );
-  } else {
-    lines.push(
-      'Reviewed factors that inform when non-invasive vascular studies are appropriate. Based on today\'s discussion and current screening guidance:',
-    );
-    lines.push('');
+    lines.push('No vascular studies indicated at this visit.');
+    return lines.join('\n');
   }
 
   if (recommended.length) {
-    lines.push('Recommended at this visit:');
+    lines.push('');
+    lines.push('Recommended:');
     for (const s of recommended) {
       writeStudyBlock(lines, s, /*recommended*/ true);
     }
   }
 
   if (conditional.length) {
-    lines.push('Discussed as optional / patient interest:');
+    lines.push('');
+    lines.push('Discussed (optional):');
     for (const s of conditional) {
       writeStudyBlock(lines, s, /*recommended*/ false);
     }
   }
 
-  if (notIndicated.length && (recommended.length || conditional.length)) {
-    const labels = notIndicated.map(studyLabel).join(', ');
-    lines.push(`Not pursued at this visit: ${labels}.`);
-    lines.push('');
-  }
-
-  lines.push(
-    'Patient verbalized understanding of the rationale and the painless, non-invasive nature of any recommended studies. Coverage expectations reviewed against the patient\'s plan; orders will be placed where appropriate.',
-  );
-  lines.push('');
-  lines.push('— Decision-support tool used to organize discussion; clinical judgment applied.');
-
   return lines.join('\n');
 }
 
 function writeStudyBlock(lines: string[], s: StudyScore, recommended: boolean): void {
-  const blurb = BLURBS[s.study];
   const meta = STUDIES.find((m) => m.id === s.study)!;
-  const verb = recommended ? 'Recommended' : 'Offered';
+  const action = recommended
+    ? 'Discussed; patient agreeable.'
+    : 'Offered; patient to consider.';
 
-  lines.push(`• ${meta.label} — ${blurb.benignName}`);
-  lines.push(`  ${blurb.chartRationale}`);
-  lines.push(`  Talking point: ${blurb.talkingPoint}`);
-  lines.push(`  Coverage: ${COVERAGE_LABEL[s.coverageLikelihood]} (${s.payorNote})`);
-  if (s.suggestedCpt.length) {
-    lines.push(`  Suggested CPT: ${s.suggestedCpt.join(', ')}`);
-  }
+  lines.push(`• ${meta.label} — ${action}`);
+  lines.push(`  Coverage: ${COVERAGE_LABEL[s.coverageLikelihood]}.`);
   if (s.suggestedIcd10.length) {
-    lines.push(`  Supporting dx: ${s.suggestedIcd10.slice(0, 4).join(', ')}`);
+    lines.push(`  Supporting dx: ${s.suggestedIcd10.slice(0, 4).join(', ')}.`);
   }
-  lines.push(`  Plan: ${verb}; patient counseled and agreeable to proceed as discussed.`);
-  lines.push('');
 }

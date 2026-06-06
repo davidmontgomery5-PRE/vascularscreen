@@ -20,6 +20,7 @@ const coverageClass: Record<string, string> = {
 export function Summary({ scores, payor }: Props) {
   const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
   const summary = buildSummary(scores, payor);
+  const toDiscuss = [...summary.recommended, ...summary.conditional];
 
   const handleCopy = async () => {
     try {
@@ -48,41 +49,64 @@ export function Summary({ scores, payor }: Props) {
         </button>
       </header>
 
-      {summary.recommended.length === 0 && summary.conditional.length === 0 ? (
+      {toDiscuss.length === 0 ? (
         <p className="text-sm text-slate-600">
-          No vascular studies indicated at this visit. Chart note will document the review.
+          No vascular studies indicated at this visit.
         </p>
       ) : (
-        <div className="space-y-3">
-          {summary.recommended.map((s) => (
-            <StudyTalking key={s.study} score={s} bandLabel="Recommend & order" />
-          ))}
-          {summary.conditional.map((s) => (
-            <StudyTalking key={s.study} score={s} bandLabel="Offer if time / interest" />
-          ))}
-        </div>
+        <>
+          <div className="space-y-2">
+            {summary.recommended.map((s) => (
+              <SummaryRow key={s.study} score={s} bandLabel="Recommend & order" />
+            ))}
+            {summary.conditional.map((s) => (
+              <SummaryRow key={s.study} score={s} bandLabel="Offer if time / interest" />
+            ))}
+          </div>
+
+          <div className="mt-4 border-t border-slate-200 pt-3">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Provider talking points
+            </h3>
+            <div className="mt-2 space-y-2">
+              {toDiscuss.map((s) => {
+                const meta = STUDIES.find((m) => m.id === s.study)!;
+                const blurb = BLURBS[s.study];
+                return (
+                  <details
+                    key={s.study}
+                    className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2"
+                  >
+                    <summary className="cursor-pointer text-xs font-medium text-slate-700">
+                      {meta.label}
+                    </summary>
+                    <p className="mt-2 text-sm italic text-slate-700">
+                      &ldquo;{blurb.talkingPoint}&rdquo;
+                    </p>
+                  </details>
+                );
+              })}
+            </div>
+          </div>
+        </>
       )}
     </section>
   );
 }
 
-function StudyTalking({ score, bandLabel }: { score: StudyScore; bandLabel: string }) {
+function SummaryRow({ score, bandLabel }: { score: StudyScore; bandLabel: string }) {
   const meta = STUDIES.find((m) => m.id === score.study)!;
-  const blurb = BLURBS[score.study];
   return (
-    <div className="rounded-md border border-slate-200 p-3">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-sm font-semibold text-slate-900">{meta.label}</div>
-          <div className="text-[11px] uppercase tracking-wide text-slate-500">{bandLabel}</div>
-        </div>
-        <span
-          className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${coverageClass[score.coverageLikelihood]}`}
-        >
-          {COVERAGE_LABEL[score.coverageLikelihood]}
-        </span>
+    <div className="flex items-start justify-between gap-2 rounded-md border border-slate-200 px-3 py-2">
+      <div>
+        <div className="text-sm font-medium text-slate-900">{meta.label}</div>
+        <div className="text-[11px] uppercase tracking-wide text-slate-500">{bandLabel}</div>
       </div>
-      <p className="mt-2 text-sm italic text-slate-700">&ldquo;{blurb.talkingPoint}&rdquo;</p>
+      <span
+        className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${coverageClass[score.coverageLikelihood]}`}
+      >
+        {COVERAGE_LABEL[score.coverageLikelihood]}
+      </span>
     </div>
   );
 }
