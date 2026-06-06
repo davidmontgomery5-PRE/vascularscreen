@@ -6,6 +6,19 @@ import { PAYORS, type PayorId } from '../data/payors';
 import { VERDICT_THRESHOLDS, type Verdict } from '../data/scorecard.config';
 import { evaluateHardGates } from './gates';
 
+export type CoverageLikelihood =
+  | 'very_likely'
+  | 'likely'
+  | 'uncertain'
+  | 'unlikely';
+
+export const COVERAGE_LABEL: Record<CoverageLikelihood, string> = {
+  very_likely: 'Very likely covered',
+  likely: 'Likely covered — verify benefits',
+  uncertain: 'Uncertain — prior auth recommended',
+  unlikely: 'High likelihood of decline — verify before ordering',
+};
+
 export interface StudyScore {
   study: StudyType;
   clinicalScore: number;
@@ -17,6 +30,9 @@ export interface StudyScore {
   suggestedIcd10: string[];
   payorNote: string;
   gateReason?: string;
+  hasSymptom: boolean;
+  coveredIndication: boolean;
+  coverageLikelihood: CoverageLikelihood;
 }
 
 export interface ScorecardInput {
@@ -71,6 +87,14 @@ export function scoreStudy(study: StudyType, input: ScorecardInput): StudyScore 
   ]);
   const suggestedIcd10 = uniq(active.flatMap((c) => c.icd10 ?? []));
 
+  const coverageLikelihood = scoreCoverage({
+    verdict,
+    blocked: gate.blocked,
+    hasSymptom,
+    covered,
+    payor: input.payor,
+  });
+
   return {
     study,
     clinicalScore,
@@ -82,7 +106,42 @@ export function scoreStudy(study: StudyType, input: ScorecardInput): StudyScore 
     suggestedIcd10,
     payorNote: payor.note,
     gateReason: gate.reason,
+    hasSymptom,
+    coveredIndication: covered,
+    coverageLikelihood,
   };
+}
+
+function scoreCoverage(args: {
+  verdict: Verdict;
+  blocked: boolean;
+  hasSymptom: boolean;
+  covered: boolean;
+  payor: PayorId;
+}): CoverageLikelihood {
+  const { verdict, blocked, hasSymptom, covered, payor } = args;
+  if (blocked) return 'unlikely';
+  if (covered) return 'very_likely';
+
+  const heavyweight: PayorId[] = [
+    'medicare_traditional',
+    'medicare_advantage',
+    'commercial_large',
+  ];
+  const isHeavy = heavyweight.includes(payor);
+
+  if (hasSymptom) {
+    if (isHeavy) return 'very_likely';
+    if (payor === 'commercial_regional') return 'likely';
+    if (payor === 'medicaid') return 'uncertain';
+    if (payor === 'self_pay') return 'very_likely';
+    return 'uncertain';
+  }
+
+  if (verdict === 'red') return 'unlikely';
+  if (payor === 'self_pay') return 'very_likely';
+  if (isHeavy) return verdict === 'green' ? 'likely' : 'uncertain';
+  return 'unlikely';
 }
 
 export function scoreAll(input: ScorecardInput): StudyScore[] {

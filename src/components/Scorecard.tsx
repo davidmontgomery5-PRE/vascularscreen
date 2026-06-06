@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CRITERIA, type CriterionGroup } from '../data/criteria';
 import { PAYORS, type PayorId } from '../data/payors';
 import { scoreAll } from '../engine/score';
 import { CriterionChip } from './CriterionChip';
 import { StudyBreakdownCard } from './StudyBreakdownCard';
-import { STUDIES } from '../data/studies';
-import { VERDICT_ICONS } from '../data/scorecard.config';
+import { Summary } from './Summary';
 
 interface Props {
   activeIds: string[];
@@ -30,23 +29,10 @@ export function Scorecard({
   onPayorChange,
   onAaaPriorSbeChange,
 }: Props) {
-  const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
-
   const scores = useMemo(
     () => scoreAll({ activeIds, payor, aaaPriorSbe }),
     [activeIds, payor, aaaPriorSbe],
   );
-
-  const handleCopy = async () => {
-    const note = buildNote(scores, payor);
-    try {
-      await navigator.clipboard.writeText(note);
-      setCopyState('copied');
-      setTimeout(() => setCopyState('idle'), 1500);
-    } catch {
-      // fallback: silent — modern browsers should support clipboard in secure contexts
-    }
-  };
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[1fr_360px]">
@@ -102,48 +88,19 @@ export function Scorecard({
         </section>
       </div>
 
-      <aside className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-            Per-study verdict
+      <aside className="space-y-4">
+        <Summary scores={scores} payor={payor} />
+        <div>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-600">
+            Per-study detail
           </h2>
-          <button
-            onClick={handleCopy}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {copyState === 'copied' ? 'Copied!' : 'Copy to note'}
-          </button>
+          <div className="space-y-3">
+            {scores.map((s) => (
+              <StudyBreakdownCard key={s.study} score={s} />
+            ))}
+          </div>
         </div>
-        {scores.map((s) => (
-          <StudyBreakdownCard key={s.study} score={s} />
-        ))}
       </aside>
     </div>
   );
-}
-
-function buildNote(scores: ReturnType<typeof scoreAll>, payor: PayorId): string {
-  const payorMeta = PAYORS.find((p) => p.id === payor)!;
-  const lines: string[] = [
-    'VASCULAR SCREENING DECISION SUPPORT',
-    `Payor: ${payorMeta.label}`,
-    '',
-  ];
-  for (const s of scores) {
-    const meta = STUDIES.find((m) => m.id === s.study)!;
-    lines.push(
-      `${VERDICT_ICONS[s.verdict]} ${meta.label} — ${s.verdict.toUpperCase()} (score ${s.finalScore})`,
-    );
-    if (s.gateReason) lines.push(`  Note: ${s.gateReason}`);
-    if (s.topContributors.length) {
-      lines.push(`  Factors: ${s.topContributors.map((c) => c.label).join('; ')}`);
-    }
-    if (s.suggestedCpt.length) lines.push(`  CPT: ${s.suggestedCpt.join(', ')}`);
-    if (s.suggestedIcd10.length) {
-      lines.push(`  ICD-10: ${s.suggestedIcd10.slice(0, 4).join(', ')}`);
-    }
-    lines.push('');
-  }
-  lines.push('Decision-support only. Verify coverage with the patient\'s plan.');
-  return lines.join('\n');
 }

@@ -1,4 +1,4 @@
-import type { StudyScore } from '../engine/score';
+import { COVERAGE_LABEL, type StudyScore } from '../engine/score';
 import { STUDIES } from '../data/studies';
 import { VERDICT_ICONS, VERDICT_LABELS } from '../data/scorecard.config';
 
@@ -70,7 +70,11 @@ export function StudyBreakdownCard({ score }: Props) {
         </div>
       </div>
 
-      <p className="mt-3 text-[11px] italic text-slate-600">{score.payorNote}</p>
+      <div className="mt-3 text-[11px] text-slate-700">
+        <span className="font-semibold">Coverage: </span>
+        <span>{COVERAGE_LABEL[score.coverageLikelihood]}</span>
+      </div>
+      <p className="mt-1 text-[11px] italic text-slate-600">{score.payorNote}</p>
     </article>
   );
 }
