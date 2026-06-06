@@ -24,7 +24,7 @@ export function TopBar({ scores, onReset }: Props) {
     <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/75 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <BrandMark className="h-10 w-10 shrink-0 text-brand-navy" />
+          <BrandMark className="h-10 w-10 shrink-0 text-brand-sky" />
           <div className="leading-tight">
             <BrandWordmark className="block text-base text-brand-navy" />
             <p className="text-[11px] text-slate-500">
